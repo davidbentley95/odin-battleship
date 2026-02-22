@@ -11,25 +11,36 @@ class Gameboard {
     }
   }
 
-  placeShip(ship, coord) {
-    this._isValidCoordinate(coord);
+  _convertStrtoNumberArr(coordStr) {
+    let strArr = [];
+    for(let i = 0; i < coordStr.length; i++) {
+        if(Number(coordStr[i])){
+            strArr.push(Number(coordStr[i]));
+        }
+    }
+    return strArr;
+  }
+
+  placeShip(ship, coordStr) {
+    let coordArr = this._convertStrtoNumberArr(coordStr);
+    this._isValidCoordinate(coordArr);
 
     if (this.orientation === 0) {
       for (let i = 0; i < ship.length; i++) {
         if (i === 0) {
-          this.map.set(coord.join(","), ship);
+          this.map.set(coordStr, ship);
         } else {
-          coord[0]++;
-          this.map.set(coord.join(","), ship);
+          coordArr[0]++;
+          this.map.set(coordArr.join(","), ship);
         }
       }
     } else if (this.orientation === 1) {
       for (let i = 0; i < ship.length; i++) {
         if(i === 0) {
-            this.map.set(coord.join(","), ship);
+            this.map.set(coordStr, ship);
         } else {
-            coord[1]++;
-            this.map.set(coord.join(","), ship);
+            coordArr[1]++;
+            this.map.set(coordArr.join(","), ship);
         }
         
       }
