@@ -76,3 +76,8 @@ test("Sinking a ship after misses and duplicates", () => {
     expect(gameboard.receiveAttack("5,1")).toEqual(true);
 })
 
+test("Gameover sets to true correctly", () => {
+    gameboard.totalShipsDown = 5;
+    expect(gameboard.gameOver()).toBe(true);
+})
+

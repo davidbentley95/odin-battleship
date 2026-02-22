@@ -3,6 +3,8 @@ class Gameboard {
     this.missedShots = [];
     this.hitShots = [];
     this.map = new Map();
+    this.totalShipsDown = 0;
+    this._gameOver = this.gameOver();
     this.orientation = 0; // 0 === vertical, 1 === horizontal
   }
 
@@ -66,7 +68,8 @@ class Gameboard {
         ship.hit();
         this.hitShots.push(coordStr);
         if (ship.isSunk()) {
-          return ship.sunk;
+            this.totalShipsDown++
+            return ship.sunk;
         }
         return ship.hits;
       } else {
@@ -76,6 +79,10 @@ class Gameboard {
     } else {
         return "These coordinates were already played";
     }
+  }
+
+  gameOver() {
+    return this.totalShipsDown === 5 ? this._gameOver = true : this._gameOver = false;
   }
 }
 
