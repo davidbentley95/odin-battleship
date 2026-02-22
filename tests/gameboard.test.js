@@ -1,7 +1,11 @@
 const { Gameboard } = require("../src/gameboard");
 const { Ship } = require("../src/ship");
 
-const gameboard = new Gameboard();
+let gameboard;
+
+beforeEach(() => {
+  gameboard = new Gameboard();
+});
 
 test("Place ship: Valid", () => {
   const ship = new Ship(5);
@@ -31,14 +35,33 @@ test("Receive Attack Hits Ship with 2 damage", () => {
 
 test("Sinking a ship", () => {
     const ship = new Ship(5);
-    ship.hits = 4;
     gameboard.placeShip(ship, "1,1");
-    expect(gameboard.receiveAttack("2,1")).toEqual(true);
+    gameboard.receiveAttack("1,1")
+    gameboard.receiveAttack("2,1")
+    gameboard.receiveAttack("3,1")
+    gameboard.receiveAttack("4,1")
+    expect(gameboard.receiveAttack("5,1")).toEqual(true);
 })
 
 test("Receive Attack Misses Ship", () => {
     const ship = new Ship(5);
     gameboard.placeShip(ship, "1,1");
     expect(gameboard.receiveAttack("1,2")).toContain("1,2");
+})
+
+test("Unable to replay a missed move", () => {
+    const ship = new Ship(5);
+    gameboard.placeShip(ship, "1,1");
+    gameboard.receiveAttack("1,2")
+    expect(() => gameboard.receiveAttack("1,2"))
+    .toThrow("These coordinates were already played");
+})
+
+test("Unable to replay a successful move", () => {
+    const ship = new Ship(5);
+    gameboard.placeShip(ship, "1,1");
+    gameboard.receiveAttack("1,2")
+    expect(() => gameboard.receiveAttack("1,2"))
+    .toThrow("These coordinates were already played");
 })
 

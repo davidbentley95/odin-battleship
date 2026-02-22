@@ -1,6 +1,7 @@
 class Gameboard {
   constructor() {
     this.missedShots = [];
+    this.hitShots = [];
     this.map = new Map();
     this.orientation = 0; // 0 === vertical, 1 === horizontal
   }
@@ -19,6 +20,12 @@ class Gameboard {
         }
     }
     return strArr;
+  }
+
+  _coordIsUnplayed(coordStr) {
+    if(this.missedShots.includes(coordStr) || this.hitShots.includes(coordStr)) {
+        throw new Error("These coordinates were already played");
+    }
   }
 
   placeShip(ship, coordStr) {
@@ -51,10 +58,12 @@ class Gameboard {
   receiveAttack(coordStr) {
     let coordArr = this._convertStrtoNumberArr(coordStr);
     this._isValidCoordinate(coordArr);
+    this._coordIsUnplayed(coordStr);
     let ship = this.map.get(coordStr);
 
     if(ship){
         ship.hit();
+        this.hitShots.push(coordStr);
         if(ship.isSunk()) {
             return ship.sunk;
         }
