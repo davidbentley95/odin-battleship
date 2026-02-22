@@ -54,10 +54,12 @@ class Gameboard {
 
     if(this.map.get(coordStr)){
         this.map.get(coordStr).hit();
+        return this.map.get(coordStr).hits;
     } else {
         this.missedShots.push(coordStr);
+        return this.missedShots;
     }
-    return this.map.get(coordStr).hits;
+    
   }
 }
 

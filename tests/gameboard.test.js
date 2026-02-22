@@ -16,9 +16,22 @@ test("Place ship: Valid", () => {
   expect(gameboard.placeShip(ship, "1,1")).toEqual(expected);
 });
 
-test("Receive Attack Hits Ship", () => {
+test("Receive Attack Hits Ship with 0 damage", () => {
     const ship = new Ship(5);
     gameboard.placeShip(ship, "1,1");
     expect(gameboard.receiveAttack("2,1")).toEqual(1);
+})
+
+test("Receive Attack Hits Ship with 2 damage", () => {
+    const ship = new Ship(5);
+    ship.hits = 2;
+    gameboard.placeShip(ship, "1,1");
+    expect(gameboard.receiveAttack("2,1")).toEqual(3);
+})
+
+test("Receive Attack Misses Ship", () => {
+    const ship = new Ship(5);
+    gameboard.placeShip(ship, "1,1");
+    expect(gameboard.receiveAttack("1,2")).toContain("1,2");
 })
 
