@@ -29,6 +29,13 @@ test("Receive Attack Hits Ship with 2 damage", () => {
     expect(gameboard.receiveAttack("2,1")).toEqual(3);
 })
 
+test("Sinking a ship", () => {
+    const ship = new Ship(5);
+    ship.hits = 4;
+    gameboard.placeShip(ship, "1,1");
+    expect(gameboard.receiveAttack("2,1")).toEqual(true);
+})
+
 test("Receive Attack Misses Ship", () => {
     const ship = new Ship(5);
     gameboard.placeShip(ship, "1,1");

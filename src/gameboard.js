@@ -51,10 +51,14 @@ class Gameboard {
   receiveAttack(coordStr) {
     let coordArr = this._convertStrtoNumberArr(coordStr);
     this._isValidCoordinate(coordArr);
+    let ship = this.map.get(coordStr);
 
-    if(this.map.get(coordStr)){
-        this.map.get(coordStr).hit();
-        return this.map.get(coordStr).hits;
+    if(ship){
+        ship.hit();
+        if(ship.isSunk()) {
+            return ship.sunk;
+        }
+        return ship.hits;
     } else {
         this.missedShots.push(coordStr);
         return this.missedShots;
