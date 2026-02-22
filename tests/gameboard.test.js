@@ -53,15 +53,26 @@ test("Unable to replay a missed move", () => {
     const ship = new Ship(5);
     gameboard.placeShip(ship, "1,1");
     gameboard.receiveAttack("1,2")
-    expect(() => gameboard.receiveAttack("1,2"))
-    .toThrow("These coordinates were already played");
+    expect(gameboard.receiveAttack("1,2")).toBe("These coordinates were already played");
 })
 
 test("Unable to replay a successful move", () => {
     const ship = new Ship(5);
     gameboard.placeShip(ship, "1,1");
     gameboard.receiveAttack("1,2")
-    expect(() => gameboard.receiveAttack("1,2"))
-    .toThrow("These coordinates were already played");
+    expect(gameboard.receiveAttack("1,2")).toBe("These coordinates were already played");
+})
+
+test("Sinking a ship after misses and duplicates", () => {
+    const ship = new Ship(5);
+    gameboard.placeShip(ship, "1,1");
+    gameboard.receiveAttack("1,1")
+    gameboard.receiveAttack("2,1")
+    gameboard.receiveAttack("2,1")
+    gameboard.receiveAttack("2,2")
+    gameboard.receiveAttack("2,3")
+    gameboard.receiveAttack("3,1")
+    gameboard.receiveAttack("4,1")
+    expect(gameboard.receiveAttack("5,1")).toEqual(true);
 })
 

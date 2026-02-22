@@ -14,18 +14,19 @@ class Gameboard {
 
   _convertStrtoNumberArr(coordStr) {
     let strArr = [];
-    for(let i = 0; i < coordStr.length; i++) {
-        if(Number(coordStr[i])){
-            strArr.push(Number(coordStr[i]));
-        }
+    for (let i = 0; i < coordStr.length; i++) {
+      if (Number(coordStr[i])) {
+        strArr.push(Number(coordStr[i]));
+      }
     }
     return strArr;
   }
 
   _coordIsUnplayed(coordStr) {
-    if(this.missedShots.includes(coordStr) || this.hitShots.includes(coordStr)) {
-        throw new Error("These coordinates were already played");
-    }
+    return (
+    !this.missedShots.includes(coordStr) &&
+    !this.hitShots.includes(coordStr)
+    );
   }
 
   placeShip(ship, coordStr) {
@@ -43,13 +44,12 @@ class Gameboard {
       }
     } else if (this.orientation === 1) {
       for (let i = 0; i < ship.length; i++) {
-        if(i === 0) {
-            this.map.set(coordStr, ship);
+        if (i === 0) {
+          this.map.set(coordStr, ship);
         } else {
-            coordArr[1]++;
-            this.map.set(coordArr.join(","), ship);
+          coordArr[1]++;
+          this.map.set(coordArr.join(","), ship);
         }
-        
       }
     }
     return this.map;
@@ -58,21 +58,24 @@ class Gameboard {
   receiveAttack(coordStr) {
     let coordArr = this._convertStrtoNumberArr(coordStr);
     this._isValidCoordinate(coordArr);
-    this._coordIsUnplayed(coordStr);
-    let ship = this.map.get(coordStr);
+    let playMove = this._coordIsUnplayed(coordStr)
+    if (playMove) {
+      let ship = this.map.get(coordStr);
 
-    if(ship){
+      if (ship) {
         ship.hit();
         this.hitShots.push(coordStr);
-        if(ship.isSunk()) {
-            return ship.sunk;
+        if (ship.isSunk()) {
+          return ship.sunk;
         }
         return ship.hits;
-    } else {
+      } else {
         this.missedShots.push(coordStr);
         return this.missedShots;
+      }
+    } else {
+        return "These coordinates were already played";
     }
-    
   }
 }
 
