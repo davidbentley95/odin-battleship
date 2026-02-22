@@ -1,10 +1,10 @@
-const {Gameboard} = require('../src/gameboard');
-const {Ship} = require('../src/ship');
+const { Gameboard } = require("../src/gameboard");
+const { Ship } = require("../src/ship");
 
 const gameboard = new Gameboard();
-const ship = new Ship(5);
 
-test("Place ship", () => {
+test("Place ship: Valid", () => {
+  const ship = new Ship(5);
   const expected = new Map([
     ["1,1", ship],
     ["2,1", ship],
@@ -13,5 +13,12 @@ test("Place ship", () => {
     ["5,1", ship],
   ]);
 
-  expect(gameboard.placeShip(ship, [1,1])).toEqual(expected);
+  expect(gameboard.placeShip(ship, "1,1")).toEqual(expected);
 });
+
+test("Receive Attack Hits Ship", () => {
+    const ship = new Ship(5);
+    gameboard.placeShip(ship, "1,1");
+    expect(gameboard.receiveAttack("2,1")).toEqual(1);
+})
+

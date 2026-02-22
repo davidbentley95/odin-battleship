@@ -47,6 +47,18 @@ class Gameboard {
     }
     return this.map;
   }
+
+  receiveAttack(coordStr) {
+    let coordArr = this._convertStrtoNumberArr(coordStr);
+    this._isValidCoordinate(coordArr);
+
+    if(this.map.get(coordStr)){
+        this.map.get(coordStr).hit();
+    } else {
+        this.missedShots.push(coordStr);
+    }
+    return this.map.get(coordStr).hits;
+  }
 }
 
 module.exports = { Gameboard };
