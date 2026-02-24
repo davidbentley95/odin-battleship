@@ -1,4 +1,4 @@
-const { Ship } = require("../src/models/ship");
+const { Ship } = require("./ship");
 
 class Gameboard {
   constructor() {
