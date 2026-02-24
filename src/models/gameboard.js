@@ -2,12 +2,11 @@ const { Ship } = require("../src/models/ship");
 
 class Gameboard {
   constructor() {
-    this.missedShots = [];
-    this.hitShots = [];
-    this.map = new Map();
-    this.totalShipsDown = 0;
-    this._gameOver = this.gameOver();
-    this.orientation = 0; // 0 === vertical, 1 === horizontal
+    this.missedShots = new Set();
+    this.hitShots = new Set();
+    this.occupied = new Map();
+    this.ships = [];
+    this.sunkShips = new Set();
   }
 
   _isValidCoordinate(coord) {
@@ -17,74 +16,97 @@ class Gameboard {
   }
 
   _convertStrtoNumberArr(coordStr) {
-    let strArr = [];
-    for (let i = 0; i < coordStr.length; i++) {
-      if (Number(coordStr[i])) {
-        strArr.push(Number(coordStr[i]));
-      }
+    const parts = coordStr.split(",");
+    const coord = [Number(parts[0]), Number(parts[1])];
+
+    if (Number.isNaN(coord[0]) || Number.isNaN(coord[1])) {
+      throw new Error('Invalid coordinate format, must be "x,y"');
     }
-    return strArr;
+
+    return coord;
   }
 
   _coordIsUnplayed(coordStr) {
-    return (
-    !this.missedShots.includes(coordStr) &&
-    !this.hitShots.includes(coordStr)
-    );
+    return !this.missedShots.has(coordStr) && !this.hitShots.has(coordStr);
   }
 
-  placeShip(ship, coordStr) {
-    let coordArr = this._convertStrtoNumberArr(coordStr);
-    this._isValidCoordinate(coordArr);
+  _canPlaceShip(ship, coordArr, orientation) {
+    let testArr = [...coordArr];
 
-    if (this.orientation === 0) {
-      for (let i = 0; i < ship.length; i++) {
-        if (i === 0) {
-          this.map.set(coordStr, ship);
-        } else {
-          coordArr[0]++;
-          this.map.set(coordArr.join(","), ship);
-        }
+    for (let i = 0; i < ship.length; i++) {
+      this._isValidCoordinate(testArr);
+
+      const key = testArr.join(",");
+      if (this.occupied.has(key)) {
+        throw new Error("Invalid placement: ship overlap");
       }
-    } else if (this.orientation === 1) {
-      for (let i = 0; i < ship.length; i++) {
-        if (i === 0) {
-          this.map.set(coordStr, ship);
-        } else {
-          coordArr[1]++;
-          this.map.set(coordArr.join(","), ship);
-        }
+
+      if (orientation === "vertical") {
+        testArr[0]++;
+      } else {
+        testArr[1]++;
       }
     }
-    return this.map;
+
+    return true;
+  }
+
+  placeShip(ship, coordStr, orientation) {
+    if (orientation !== "vertical" && orientation !== "horizontal") {
+      throw new Error('Invalid orientation, must be "vertical" or "horizontal"');
+    }
+
+    if (this.ships.includes(ship)) {
+      throw new Error("This ship is already placed");
+    }
+
+    let coordArr = this._convertStrtoNumberArr(coordStr);
+    this._isValidCoordinate(coordArr);
+    this._canPlaceShip(ship, coordArr, orientation);
+
+    for (let i = 0; i < ship.length; i++) {
+      const key = coordArr.join(",");
+      this.occupied.set(key, ship);
+
+      if (orientation === "vertical") coordArr[0]++;
+      else coordArr[1]++;
+    }
+
+    this.ships.push(ship);
+    return this.occupied;
   }
 
   receiveAttack(coordStr) {
     let coordArr = this._convertStrtoNumberArr(coordStr);
     this._isValidCoordinate(coordArr);
-    let playMove = this._coordIsUnplayed(coordStr)
-    if (playMove) {
-      let ship = this.map.get(coordStr);
 
-      if (ship) {
-        ship.hit();
-        this.hitShots.push(coordStr);
-        if (ship.isSunk()) {
-            this.totalShipsDown++
-            return ship.sunk;
+    if (!this._coordIsUnplayed(coordStr)) {
+      return "These coordinates were already played";
+    }
+
+    let ship = this.occupied.get(coordStr);
+
+    if (ship) {
+      ship.hit();
+      this.hitShots.add(coordStr);
+
+      if (ship.isSunk()) {
+        if (!this.sunkShips.has(ship)) {
+          this.sunkShips.add(ship);
+          return "sunk";
         }
-        return ship.hits;
-      } else {
-        this.missedShots.push(coordStr);
-        return this.missedShots;
+        return "hit";
       }
+
+      return "hit";
     } else {
-        return "These coordinates were already played";
+      this.missedShots.add(coordStr);
+      return "missed";
     }
   }
 
   gameOver() {
-    return this.totalShipsDown === 5 ? this._gameOver = true : this._gameOver = false;
+    return this.ships.length > 0 && this.ships.every((ship) => ship.isSunk());
   }
 }
 
