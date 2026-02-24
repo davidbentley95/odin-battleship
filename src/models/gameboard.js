@@ -1,5 +1,3 @@
-const { Ship } = require("./ship");
-
 class Gameboard {
   constructor() {
     this.missedShots = new Set();
