@@ -1,3 +1,5 @@
+const { Ship } = require("../src/models/ship");
+
 class Gameboard {
   constructor() {
     this.missedShots = [];

@@ -1,5 +1,7 @@
+const { Gameboard } = require("../src/models/gameboard");
+
 class Player {
-    constructor(gameboard) {
+    constructor() {
         this.gameboard = new Gameboard();
         this.score = 0;
     }
