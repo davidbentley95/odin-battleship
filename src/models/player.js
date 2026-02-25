@@ -1,8 +1,9 @@
 const { Gameboard } = require("./gameboard");
 
 class Player {
-  constructor(size = 10) {
+  constructor(size = 10, playerID) {
     this.gameboard = new Gameboard(size);
+    this.playerID = playerID;
     this.score = 0;
     this.fleet = [
       new Ship(5),
