@@ -1,5 +1,6 @@
 class Gameboard {
-  constructor() {
+  constructor(size = 10) {
+    this.size = size;
     this.missedShots = new Set();
     this.hitShots = new Set();
     this.occupied = new Map();
