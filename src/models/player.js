@@ -1,8 +1,8 @@
 const { Gameboard } = require("./gameboard");
 
 class Player {
-  constructor() {
-    this.gameboard = new Gameboard();
+  constructor(size = 10) {
+    this.gameboard = new Gameboard(size);
     this.score = 0;
     this.fleet = [
       new Ship(5),
@@ -18,7 +18,7 @@ class Player {
     this.gameboard.placeShip(fleet[1],"4,5", "horizontal");
     this.gameboard.placeShip(fleet[2],"10,3", "vertical");
     this.gameboard.placeShip(fleet[3],"3,3", "horizontal");
-    this.gameboard.placeShip(fleet[4],"8,4", "vertical");a
+    this.gameboard.placeShip(fleet[4],"8,4", "vertical");
   }
 }
 
