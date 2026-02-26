@@ -22,7 +22,6 @@ function createBoardGrid(player) {
             div.textContent = coordinates.join(",");
             parentDiv.appendChild(div);
         }
-        
     }
 }
 
