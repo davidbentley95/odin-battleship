@@ -1,4 +1,4 @@
-class Gameboard {
+export default class Gameboard {
   constructor(size) {
     this.size = size;
     this.missedShots = new Set();
@@ -108,5 +108,3 @@ class Gameboard {
     return this.ships.length > 0 && this.ships.every((ship) => ship.isSunk());
   }
 }
-
-module.exports = { Gameboard };

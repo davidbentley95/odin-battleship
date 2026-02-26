@@ -1,5 +1,5 @@
-const { Gameboard } = require("../src/models/gameboard");
-const { Ship } = require("../src/models/ship");
+import Gameboard from "../src/models/gameboard.js";
+import Ship from "../src/models/ship.js";
 
 let gameboard;
 

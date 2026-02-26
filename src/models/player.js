@@ -1,6 +1,6 @@
-const { Gameboard } = require("./gameboard");
+import Gameboard from "./gameboard.js"
 
-class Player {
+export default class Player {
   constructor(size = 10, playerID) {
     this.gameboard = new Gameboard(size);
     this.playerID = playerID;
@@ -22,5 +22,3 @@ class Player {
     this.gameboard.placeShip(fleet[4],"8,4", "vertical");
   }
 }
-
-module.exports = { Player };

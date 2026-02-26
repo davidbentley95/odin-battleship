@@ -1,0 +1,13 @@
+#player1-board {
+    display: grid;
+    gap: 4px;    
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+}
+
+.board-cell {
+    aspect-ratio: 1 / 1;
+    border: 1px solid #ccc;
+    background: white;
+    cursor: pointer;
+}
