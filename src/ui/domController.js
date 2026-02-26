@@ -6,6 +6,9 @@ function createBoardGrid(player) {
     const parentDiv = document.createElement("div");
     parentDiv.id = player.playerID;
 
+    const size = player.gameboard.size;
+    parentDiv.style.setProperty("--n", size);
+
     const main = document.querySelector("main");
     main.appendChild(parentDiv);
 
@@ -16,7 +19,7 @@ function createBoardGrid(player) {
     }
 }
 
-(() => {
+export function initUI() {
     createBoardGrid(player1);
     createBoardGrid(player2);
-})();
+};

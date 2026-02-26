@@ -1,7 +1,8 @@
 import Gameboard from "./gameboard.js"
+import Ship from "./ship.js"
 
 export default class Player {
-  constructor(size = 10, playerID) {
+  constructor(playerID, size = 10) {
     this.gameboard = new Gameboard(size);
     this.playerID = playerID;
     this.score = 0;
