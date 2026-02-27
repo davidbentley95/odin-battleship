@@ -16,10 +16,10 @@ export default class Player {
   }
 
   presetShipPlacement() {
-    this.gameboard.placeShip(fleet[0],"1,1", "vertical");
-    this.gameboard.placeShip(fleet[1],"4,5", "horizontal");
-    this.gameboard.placeShip(fleet[2],"10,3", "vertical");
-    this.gameboard.placeShip(fleet[3],"3,3", "horizontal");
-    this.gameboard.placeShip(fleet[4],"8,4", "vertical");
+    this.gameboard.placeShip(this.fleet[0],"1,1", "vertical");
+    this.gameboard.placeShip(this.fleet[1],"4,5", "horizontal");
+    this.gameboard.placeShip(this.fleet[2],"2,7", "vertical");
+    this.gameboard.placeShip(this.fleet[3],"3,3", "horizontal");
+    this.gameboard.placeShip(this.fleet[4],"8,4", "vertical");
   }
 }

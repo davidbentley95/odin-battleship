@@ -25,7 +25,20 @@ function createBoardGrid(player) {
     }
 }
 
+function placeShips() {
+    const cells = document.querySelectorAll(".board-cell");
+
+    player1.gameboard.occupied.keys().forEach(key => {
+    const target = [...cells].find(
+    cell => cell.textContent.trim() === key);
+    
+    target.style.setProperty("background-color", "blue")
+    console.log(target)
+})
+}
+
 export function initUI() {
     createBoardGrid(player1);
     createBoardGrid(player2);
+    placeShips();
 };
