@@ -67,8 +67,11 @@ export default class Gameboard {
       const key = coordArr.join(",");
       this.occupied.set(key, ship);
 
-      if (orientation === "horizontal") coordArr[0]++;
-      else coordArr[1]++;
+      if (orientation === "vertical") {
+        coordArr[0]++;
+      } else {
+        coordArr[1]++;
+      } 
     }
 
     this.ships.push(ship);
