@@ -6,7 +6,8 @@ main {
 
 header {
     display: flex;
-    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 
 #player1, #player2 {
@@ -42,4 +43,8 @@ header {
     height: 50px;
     width: 50px;
 
+}
+
+.inactive {
+    pointer-events: none; 
 }
