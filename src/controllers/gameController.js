@@ -27,12 +27,12 @@ export function playTurn(cellCoordinates) {
 function checkGameOver() {
     if(player1.gameboard.gameOver() === true) {
         winner = player2.playerID;
-        return "Player 2 wins!"
+        gameOver = true;
     }
 
     if(player2.gameboard.gameOver() === true) {
         winner = player1.playerID;
-        return "Player 1 wins!"
+        gameOver = true;
     }
  };
 

@@ -48,3 +48,24 @@ header {
 .inactive {
     pointer-events: none; 
 }
+
+.modal-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 300px;
+    height: 100px;
+    background: rgba(122, 121, 121, 0.2);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 1px solid rgba(122, 121, 121, 0.3);
+    font-size: 2em;
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 99;
+    visibility: hidden;
+}

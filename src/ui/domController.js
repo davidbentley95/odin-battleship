@@ -1,4 +1,12 @@
-import { player1, player2, playerTurn, playTurn, moveStatus } from "../controllers/gameController.js";
+import {
+  player1,
+  player2,
+  playerTurn,
+  playTurn,
+  moveStatus,
+  gameOver,
+  winner,
+} from "../controllers/gameController.js";
 
 function createBoardGrid(player) {
   const boardSize = player.gameboard.size;
@@ -34,35 +42,43 @@ function placeShips() {
   });
 }
 
-function updateTurn(playerTurn) {
-    let turnHeader = document.querySelector(".player-turn-header");
-    if(playerTurn === 0) {
-        turnHeader.textContent = "Player Turn: Player 1";
-    } else {
-        turnHeader.textContent = "Player Turn: Player 2";
-    }
+function updateTurnHeader() {
+  let turnHeader = document.querySelector(".player-turn-header");
+  if (playerTurn === 0) {
+    turnHeader.textContent = "Player Turn: Player 1";
+  } else {
+    turnHeader.textContent = "Player Turn: Player 2";
+  }
 }
 
 function toggleInactiveClass(firstPlayer, secondPlayer) {
-    firstPlayer.classList.toggle("inactive");
-    secondPlayer.classList.toggle("inactive");
+  firstPlayer.classList.toggle("inactive");
+  secondPlayer.classList.toggle("inactive");
 }
 
 function changePlayedCell(cell, hitResult) {
-    cell.classList.toggle("inactive");
-    if(hitResult === "missed") {
-        cell.style.setProperty("background-color", "grey");
-    } else {
-        cell.style.setProperty("background-color", "green");
-    }
-    
+  cell.classList.toggle("inactive");
+  if (hitResult === "missed") {
+    cell.style.setProperty("background-color", "grey");
+  } else {
+    cell.style.setProperty("background-color", "green");
+  }
 }
 
-function updateDOM(cell, cellCoordinates, player1Board, player2Board) {
-  let result = playTurn(cellCoordinates);  
-  updateTurn(playerTurn);
-  toggleInactiveClass(player1Board, player2Board);
+function updateDOM(cell, player1Board, player2Board) {
   changePlayedCell(cell, moveStatus);
+  if (gameOver) {
+    const modal = document.querySelector(".modal-box");
+    modal.style.setProperty("visibility", "visible");
+
+    const winnerHeader = document.querySelector(".winning-player");
+    winnerHeader.innerHTML = winner;
+
+    document.querySelector("main").style.setProperty("pointer-event", "none");
+  } else {
+    updateTurnHeader();
+    toggleInactiveClass(player1Board, player2Board);
+  }
 }
 
 export function initUI() {
@@ -82,7 +98,8 @@ export function initUI() {
     if (!cell) {
       return;
     }
-    updateDOM(cell, cellCoordinates, player1Board, player2Board);
+    playTurn(cellCoordinates);
+    updateDOM(cell, player1Board, player2Board);
   });
 
   document.querySelector("#player2").addEventListener("click", (event) => {
@@ -91,6 +108,7 @@ export function initUI() {
     if (!cell) {
       return;
     }
-    updateDOM(cell, cellCoordinates, player1Board, player2Board);
+    playTurn(cellCoordinates);
+    updateDOM(cell, player1Board, player2Board);
   });
 }
