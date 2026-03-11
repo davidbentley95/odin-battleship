@@ -1,4 +1,4 @@
-import { player1, player2, getPlayerTurn, setPlayerTurn } from "../controllers/gameController.js";
+import { player1, player2, getPlayerTurn, setPlayerTurn, playTurn } from "../controllers/gameController.js";
 
 function createBoardGrid(player) {
   const boardSize = player.gameboard.size;
@@ -48,6 +48,16 @@ function toggleInactiveClass(firstPlayer, secondPlayer) {
     secondPlayer.classList.toggle("inactive");
 }
 
+function changePlayedCell(cell, hitResult) {
+    cell.classList.toggle("inactive");
+    if(hitResult === "missed") {
+        cell.style.setProperty("background-color", "grey");
+    } else {
+        cell.style.setProperty("background-color", "green");
+    }
+    
+}
+
 export function initUI() {
   createBoardGrid(player1);
   createBoardGrid(player2);
@@ -61,23 +71,27 @@ export function initUI() {
   //event listeners
   document.querySelector("#player1").addEventListener("click", (event) => {
     const cell = event.target.closest(".board-cell");
+    const cellCoordinates = event.target.innerHTML;
     if (!cell) {
       return;
     }
     setPlayerTurn(0);
     updateTurn(getPlayerTurn());
-    console.log(event.target.innerHTML);
+    let result = playTurn(cellCoordinates);
     toggleInactiveClass(player1Board, player2Board);
+    changePlayedCell(cell, result);
   });
 
   document.querySelector("#player2").addEventListener("click", (event) => {
     const cell = event.target.closest(".board-cell");
+    const cellCoordinates = event.target.innerHTML;
     if (!cell) {
       return;
     }
     setPlayerTurn(1);
     updateTurn(getPlayerTurn());
-    console.log(event.target.innerHTML);
+    let result = playTurn(cellCoordinates);
     toggleInactiveClass(player1Board, player2Board);
+    changePlayedCell(cell, result);
   });
 }
