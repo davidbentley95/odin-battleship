@@ -1,4 +1,4 @@
-import { player1, player2, getPlayerTurn, setPlayerTurn, playTurn } from "../controllers/gameController.js";
+import { player1, player2, playerTurn, playTurn, moveStatus } from "../controllers/gameController.js";
 
 function createBoardGrid(player) {
   const boardSize = player.gameboard.size;
@@ -58,6 +58,13 @@ function changePlayedCell(cell, hitResult) {
     
 }
 
+function updateDOM(cell, cellCoordinates, player1Board, player2Board) {
+  let result = playTurn(cellCoordinates);  
+  updateTurn(playerTurn);
+  toggleInactiveClass(player1Board, player2Board);
+  changePlayedCell(cell, moveStatus);
+}
+
 export function initUI() {
   createBoardGrid(player1);
   createBoardGrid(player2);
@@ -75,11 +82,7 @@ export function initUI() {
     if (!cell) {
       return;
     }
-    setPlayerTurn(0);
-    updateTurn(getPlayerTurn());
-    let result = playTurn(cellCoordinates);
-    toggleInactiveClass(player1Board, player2Board);
-    changePlayedCell(cell, result);
+    updateDOM(cell, cellCoordinates, player1Board, player2Board);
   });
 
   document.querySelector("#player2").addEventListener("click", (event) => {
@@ -88,10 +91,6 @@ export function initUI() {
     if (!cell) {
       return;
     }
-    setPlayerTurn(1);
-    updateTurn(getPlayerTurn());
-    let result = playTurn(cellCoordinates);
-    toggleInactiveClass(player1Board, player2Board);
-    changePlayedCell(cell, result);
+    updateDOM(cell, cellCoordinates, player1Board, player2Board);
   });
 }
