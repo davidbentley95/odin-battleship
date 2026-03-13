@@ -19,6 +19,10 @@ header {
     height: 400px;
 }
 
+.player-turn-header {
+    display: none;
+}
+
 .board-cell {
     aspect-ratio: 1 / 1;
     border: 1px solid #ccc;
@@ -68,4 +72,42 @@ header {
     transform: translate(-50%, -50%);
     z-index: 99;
     visibility: hidden;
+}
+
+.boats {
+  display: none;
+  gap: 20px;
+  align-content: start;
+}
+
+.boats:hover {
+    cursor: pointer;
+}
+
+.boat {
+  display: grid;
+  gap: 4px;
+  justify-content: start;
+}
+
+.boat div {
+  width: 30px;
+  aspect-ratio: 1 / 1;
+  background-color: grey;
+  border: 1px solid #999;
+}
+
+.selected {
+    background-color: blue;
+}
+
+.game-start {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.direction-selector {
+    display: none;
 }

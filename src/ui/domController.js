@@ -6,6 +6,7 @@ import {
   moveStatus,
   gameOver,
   winner,
+  setOpponentType
 } from "../controllers/gameController.js";
 
 function createBoardGrid(player) {
@@ -81,34 +82,68 @@ function updateDOM(cell, player1Board, player2Board) {
   }
 }
 
-export function initUI() {
-  createBoardGrid(player1);
-  createBoardGrid(player2);
+function displayBoats() {
+  document.querySelector(".boats").style.setProperty("display", "grid");
+    document.querySelectorAll(".boat").forEach((el) =>
+    el.addEventListener("click", (event) => {
+      const boat = event.currentTarget;
 
-  const player1Board = document.querySelector("#player1");
-  const player2Board = document.querySelector("#player2");
+      const boatLength = boat.children.length;
 
-  player1Board.classList.toggle("inactive");
-  placeShips();
+      console.log(boatLength)
 
-  //event listeners
-  document.querySelector("#player1").addEventListener("click", (event) => {
-    const cell = event.target.closest(".board-cell");
-    const cellCoordinates = event.target.innerHTML;
-    if (!cell) {
-      return;
-    }
-    playTurn(cellCoordinates);
-    updateDOM(cell, player1Board, player2Board);
-  });
+    }),
+  );
 
-  document.querySelector("#player2").addEventListener("click", (event) => {
-    const cell = event.target.closest(".board-cell");
-    const cellCoordinates = event.target.innerHTML;
-    if (!cell) {
-      return;
-    }
-    playTurn(cellCoordinates);
-    updateDOM(cell, player1Board, player2Board);
-  });
+  document.querySelector(".direction-selector").style.setProperty("display", "flex")
+
 }
+
+function displayPlayerSelection() {
+  createBoardGrid(player1);
+  displayBoats();
+}
+
+export function initUI() {
+
+  // createBoardGrid(player2);
+
+  // const player1Board = document.querySelector("#player1");
+  // const player2Board = document.querySelector("#player2");
+
+  // // player1Board.classList.toggle("inactive");
+  // placeShips();
+
+  // //event listeners
+  // document.querySelector("#player1").addEventListener("click", (event) => {
+  //   const cell = event.target.closest(".board-cell");
+  //   const cellCoordinates = event.target.innerHTML;
+  //   if (!cell) {
+  //     return;
+  //   }
+  //   playTurn(cellCoordinates);
+  //   updateDOM(cell, player1Board, player2Board);
+  // });
+
+  // document.querySelector("#player2").addEventListener("click", (event) => {
+  //   const cell = event.target.closest(".board-cell");
+  //   const cellCoordinates = event.target.innerHTML;
+  //   if (!cell) {
+  //     return;
+  //   }
+  //   playTurn(cellCoordinates);
+  //   updateDOM(cell, player1Board, player2Board);
+  // });
+
+
+
+  document.querySelector(".opponent-buttons").addEventListener("click", (event) => {
+    const button = event.target.closest("button");
+
+    if(button) {
+      setOpponentType(button.value);
+    }
+    document.querySelector(".game-start").style.setProperty("display", "none");
+    displayPlayerSelection();
+  });
+};

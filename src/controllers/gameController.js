@@ -5,10 +5,11 @@ export const player2 = new Player("player2");
 export let playerTurn = 0;
 export let gameOver = false;
 export let moveStatus = "";
-export let winner = ""; 
+export let winner = "";
+export let opponentType = "";
 
-player1.presetShipPlacement();
-player2.presetShipPlacement();
+// player1.presetShipPlacement();
+// player2.presetShipPlacement();
 
 export function playTurn(cellCoordinates) {
 
@@ -24,14 +25,25 @@ export function playTurn(cellCoordinates) {
 
  };
 
+ export function setOpponentType(type) {
+    opponentType = type;
+    console.log(opponentType);
+ }
+
+ function addShip(player, shipLength, coordinates, direction) {
+    player.addShip(shipLength, coordinates, direction);
+ }
+
 function checkGameOver() {
     if(player1.gameboard.gameOver() === true) {
         winner = player2.playerID;
+        player2.score++;
         gameOver = true;
     }
 
     if(player2.gameboard.gameOver() === true) {
         winner = player1.playerID;
+        player1.score++;
         gameOver = true;
     }
  };

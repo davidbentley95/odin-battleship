@@ -6,20 +6,20 @@ export default class Player {
     this.gameboard = new Gameboard(size);
     this.playerID = playerID;
     this.score = 0;
-    this.fleet = [
-      new Ship(5),
-      new Ship(4),
-      new Ship(3),
-      new Ship(3),
-      new Ship(2),
-    ];
+    this.fleet = [];
   }
 
   presetShipPlacement() {
-    this.gameboard.placeShip(this.fleet[0],"1,1", "vertical");
-    this.gameboard.placeShip(this.fleet[1],"7,5", "horizontal");
-    this.gameboard.placeShip(this.fleet[2],"2,7", "vertical");
-    this.gameboard.placeShip(this.fleet[3],"10,3", "horizontal");
-    this.gameboard.placeShip(this.fleet[4],"10,9", "horizontal");
+    this.gameboard.placeShip(new Ship(5),"1,1", "vertical");
+    this.gameboard.placeShip(new Ship(4),"7,5", "horizontal");
+    this.gameboard.placeShip(new Ship(3),"2,7", "vertical");
+    this.gameboard.placeShip(new Ship(3),"10,3", "horizontal");
+    this.gameboard.placeShip(new Ship(2),"10,9", "horizontal");
+  }
+
+  placeShip(shipLength, coordinates, direction) {
+    const boat = new Ship(shipLength);
+    this.gameboard.placeShip(boat, coordinates, direction);
+    this.fleet.push(boat);
   }
 }
