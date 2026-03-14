@@ -8,8 +8,54 @@ import {
   winner,
   setOpponentType,
   setBoatLength,
-  setDirection
+  getBoatLength,
+  setDirection,
+  getDirection,
 } from "../controllers/gameController.js";
+
+//event helpers
+const handleMouseEnter = (event) => {
+  let cell = event.target;
+  let cellID = cell.id;
+  let row = Number(cell.innerHTML.split(",")[0]);
+  let column = Number(cell.innerHTML.split(",")[1]);
+  let cellRow = 0;
+  let cellColumn = 0;
+  let visitedCells = [];
+
+  for (let i = 1; i <= getBoatLength(); i++) {
+    cell.style.backgroundColor = "lightblue";
+    visitedCells.push(cell);
+    cellRow = Number(cell.innerHTML.split(",")[0]);
+    cellColumn = Number(cell.innerHTML.split(",")[1]);
+    if (getDirection() === "horizontal") {
+      cell = cell.nextElementSibling;
+    } else {
+      let nextCellID = String(Number(cellID) + 10);
+      cell = document.getElementById(nextCellID);
+      cellID = nextCellID;
+    }
+    if(!cell) {
+      break;
+    }
+  }
+  
+  if (
+    (getDirection() === "horizontal" && row !== cellRow) ||
+    (getDirection() === "vertical" && column !== cellColumn) ||
+    (visitedCells.length !== getBoatLength())
+  ) {
+    visitedCells.forEach((cell) => {
+      cell.style.backgroundColor = "red";
+    });
+  }
+};
+
+const handleMouseLeave = (event) => {
+  document.querySelectorAll(".board-cell").forEach((cell) => {
+    cell.style.backgroundColor = "";
+  });
+};
 
 function createBoardGrid(player) {
   const boardSize = player.gameboard.size;
@@ -22,6 +68,7 @@ function createBoardGrid(player) {
   main.prepend(parentDiv);
 
   let coordinates = [0, 0];
+  let cellID = 1;
 
   for (let i = 1; i <= boardSize; i++) {
     for (let j = 1; j <= boardSize; j++) {
@@ -30,7 +77,11 @@ function createBoardGrid(player) {
       const div = document.createElement("div");
       div.classList.add("board-cell");
       div.textContent = coordinates.join(",");
+      div.id = String(cellID);
+      div.addEventListener("mouseenter", handleMouseEnter);
+      div.addEventListener("mouseleave", handleMouseLeave);
       parentDiv.appendChild(div);
+      cellID++;
     }
   }
 }
@@ -86,15 +137,12 @@ function updateDOM(cell, player1Board, player2Board) {
 
 function displayBoats() {
   document.querySelector(".boats").style.setProperty("display", "grid");
-    document.querySelectorAll(".boat").forEach((el) =>
+  document.querySelectorAll(".boat").forEach((el) =>
     el.addEventListener("click", (event) => {
       const boat = event.currentTarget;
 
       const boatLength = boat.children.length;
       setBoatLength(boatLength);
-
-      console.log(boatLength);
-
     }),
   );
 
@@ -102,21 +150,18 @@ function displayBoats() {
   directionSelector.style.setProperty("display", "flex");
   directionSelector.addEventListener("click", (event) => {
     const input = event.target.closest("input");
-    if(input) {
+    if (input) {
       setDirection(input.value);
     }
-  })
-
+  });
 }
 
 function displayPlayerSelection() {
   createBoardGrid(player1);
   displayBoats();
-
 }
 
 export function initUI() {
-
   // createBoardGrid(player2);
 
   // const player1Board = document.querySelector("#player1");
@@ -146,15 +191,17 @@ export function initUI() {
   //   updateDOM(cell, player1Board, player2Board);
   // });
 
+  document
+    .querySelector(".opponent-buttons")
+    .addEventListener("click", (event) => {
+      const button = event.target.closest("button");
 
-
-  document.querySelector(".opponent-buttons").addEventListener("click", (event) => {
-    const button = event.target.closest("button");
-
-    if(button) {
-      setOpponentType(button.value);
-    }
-    document.querySelector(".game-start").style.setProperty("display", "none");
-    displayPlayerSelection();
-  });
-};
+      if (button) {
+        setOpponentType(button.value);
+      }
+      document
+        .querySelector(".game-start")
+        .style.setProperty("display", "none");
+      displayPlayerSelection();
+    });
+}

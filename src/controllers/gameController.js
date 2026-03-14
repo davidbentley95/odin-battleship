@@ -7,8 +7,8 @@ export let gameOver = false;
 export let moveStatus = "";
 export let winner = "";
 export let opponentType = "";
-let boatLength = 0;
-let boatDirection = "";
+let boatLength = 5;
+let boatDirection = "horizontal";
 
 // player1.presetShipPlacement();
 // player2.presetShipPlacement();
@@ -40,8 +40,16 @@ export function playTurn(cellCoordinates) {
     boatLength = length;
  }
 
+ export function getBoatLength() {
+    return boatLength;
+ }
+
  export function setDirection(direction) {
     boatDirection = direction;
+ }
+
+ export function getDirection() {
+    return boatDirection;
  }
 
 function checkGameOver() {

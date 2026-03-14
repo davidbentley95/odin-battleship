@@ -33,9 +33,9 @@ header {
     content-visibility: hidden;
 }
 
-.board-cell:hover {
+/* .board-cell:hover {
     background: #757575;
-}
+} */
 
 #ships {
     display: flex;
