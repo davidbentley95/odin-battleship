@@ -2,6 +2,8 @@ main {
     display: flex;
     gap: 40px;
     justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 
 header {
@@ -88,6 +90,7 @@ header {
   display: grid;
   gap: 4px;
   justify-content: start;
+  grid-template-columns: repeat(5, 1fr);
 }
 
 .boat div {
@@ -110,4 +113,5 @@ header {
 
 .direction-selector {
     display: none;
+    align-items: center;
 }

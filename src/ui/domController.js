@@ -6,7 +6,9 @@ import {
   moveStatus,
   gameOver,
   winner,
-  setOpponentType
+  setOpponentType,
+  setBoatLength,
+  setDirection
 } from "../controllers/gameController.js";
 
 function createBoardGrid(player) {
@@ -17,7 +19,7 @@ function createBoardGrid(player) {
   parentDiv.style.setProperty("--n", boardSize);
 
   const main = document.querySelector("main");
-  main.appendChild(parentDiv);
+  main.prepend(parentDiv);
 
   let coordinates = [0, 0];
 
@@ -89,19 +91,28 @@ function displayBoats() {
       const boat = event.currentTarget;
 
       const boatLength = boat.children.length;
+      setBoatLength(boatLength);
 
-      console.log(boatLength)
+      console.log(boatLength);
 
     }),
   );
 
-  document.querySelector(".direction-selector").style.setProperty("display", "flex")
+  const directionSelector = document.querySelector(".direction-selector");
+  directionSelector.style.setProperty("display", "flex");
+  directionSelector.addEventListener("click", (event) => {
+    const input = event.target.closest("input");
+    if(input) {
+      setDirection(input.value);
+    }
+  })
 
 }
 
 function displayPlayerSelection() {
   createBoardGrid(player1);
   displayBoats();
+
 }
 
 export function initUI() {
