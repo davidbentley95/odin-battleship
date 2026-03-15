@@ -39,7 +39,7 @@ const handleMouseEnter = (event) => {
       break;
     }
   }
-  
+
   if (
     (getDirection() === "horizontal" && row !== cellRow) ||
     (getDirection() === "vertical" && column !== cellColumn) ||
@@ -136,14 +136,22 @@ function updateDOM(cell, player1Board, player2Board) {
 }
 
 function displayBoats() {
-  document.querySelector(".boats").style.setProperty("display", "grid");
-  document.querySelectorAll(".boat").forEach((el) =>
-    el.addEventListener("click", (event) => {
-      const boat = event.currentTarget;
+  const boats = document.querySelector(".boats");
+  boats.style.setProperty("display", "grid");
 
+  document.querySelectorAll(".boat").forEach(el =>
+    el.addEventListener("click", (event) => {
+      //remove selected-boat class from all boats
+      for (const child of boats.children) {
+        child.classList.remove("selected-boat");
+      }
+      //add selected-boat class for special highlighting
+      const boat = event.currentTarget;
+      boat.classList.toggle("selected-boat");
+      //obtain and return the length of the boat to game controller
       const boatLength = boat.children.length;
       setBoatLength(boatLength);
-    }),
+    })
   );
 
   const directionSelector = document.querySelector(".direction-selector");

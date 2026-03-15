@@ -115,3 +115,7 @@ header {
     display: none;
     align-items: center;
 }
+
+.selected-boat > div {
+  background-color: lightblue;
+}
