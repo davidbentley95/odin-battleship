@@ -10,6 +10,7 @@ export default class Gameboard {
 
   _isValidCoordinate(coord) {
     if (coord[0] < 1 || coord[0] > 10 || coord[1] < 1 || coord[1] > 10) {
+      alert("Invalid coordinate, must be between 1 and 10");
       throw new Error("Invalid coordinate, must be between 1 and 10");
     }
   }
@@ -37,6 +38,7 @@ export default class Gameboard {
 
       const key = testArr.join(",");
       if (this.occupied.has(key)) {
+        alert("Invalid placement: ship overlap");
         throw new Error("Invalid placement: ship overlap");
       }
 

@@ -29,11 +29,18 @@ export function playTurn(cellCoordinates) {
 
  export function setOpponentType(type) {
     opponentType = type;
-    console.log(opponentType);
  }
 
  function addShip(player, shipLength, coordinates, direction) {
     player.addShip(shipLength, coordinates, direction);
+ }
+
+ export function getCurrentPlayer() {
+   if(playerTurn === 0) {
+      return player1;
+   } else {
+      return player2;
+   }
  }
 
  export function setBoatLength(length) {

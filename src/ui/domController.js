@@ -11,10 +11,11 @@ import {
   getBoatLength,
   setDirection,
   getDirection,
+  getCurrentPlayer
 } from "../controllers/gameController.js";
 
 //event helpers
-const handleMouseEnter = (event) => {
+const changeCellColour = (event) => {
   let cell = event.target;
   let cellID = cell.id;
   let row = Number(cell.innerHTML.split(",")[0]);
@@ -28,6 +29,9 @@ const handleMouseEnter = (event) => {
     visitedCells.push(cell);
     cellRow = Number(cell.innerHTML.split(",")[0]);
     cellColumn = Number(cell.innerHTML.split(",")[1]);
+    if(event.type === "click") {
+      cell.classList.add("placed-ship")
+    }
     if (getDirection() === "horizontal") {
       cell = cell.nextElementSibling;
     } else {
@@ -53,9 +57,16 @@ const handleMouseEnter = (event) => {
 
 const handleMouseLeave = (event) => {
   document.querySelectorAll(".board-cell").forEach((cell) => {
-    cell.style.backgroundColor = "";
+    if(!cell.classList.contains("placed-ship")) {
+      cell.style.backgroundColor = "";
+    }
   });
 };
+
+function placeShip(event, player) {
+  const cellCoordinates = event.target.innerHTML;
+  player.placeShip(getBoatLength(), cellCoordinates, getDirection());
+}
 
 function createBoardGrid(player) {
   const boardSize = player.gameboard.size;
@@ -78,23 +89,27 @@ function createBoardGrid(player) {
       div.classList.add("board-cell");
       div.textContent = coordinates.join(",");
       div.id = String(cellID);
-      div.addEventListener("mouseenter", handleMouseEnter);
+      div.addEventListener("mouseenter", changeCellColour);
       div.addEventListener("mouseleave", handleMouseLeave);
+      div.addEventListener("click", (event) => {
+        placeShip(event, getCurrentPlayer());
+        changeCellColour(event);
+      })
       parentDiv.appendChild(div);
       cellID++;
     }
   }
 }
 
-function placeShips() {
-  const cells = document.querySelectorAll(".board-cell");
+// function placeComputerShips() {
+//   const cells = document.querySelectorAll(".board-cell");
 
-  player1.gameboard.occupied.keys().forEach((key) => {
-    const target = [...cells].find((cell) => cell.textContent.trim() === key);
+//   player2.gameboard.occupied.keys().forEach((key) => {
+//     const target = [...cells].find((cell) => cell.textContent.trim() === key);
 
-    target.style.setProperty("background-color", "blue");
-  });
-}
+//     target.style.setProperty("background-color", "blue");
+//   });
+// }
 
 function updateTurnHeader() {
   let turnHeader = document.querySelector(".player-turn-header");
@@ -164,8 +179,8 @@ function displayBoats() {
   });
 }
 
-function displayPlayerSelection() {
-  createBoardGrid(player1);
+function displayPlayerSelection(player) {
+  createBoardGrid(player);
   displayBoats();
 }
 
@@ -210,6 +225,6 @@ export function initUI() {
       document
         .querySelector(".game-start")
         .style.setProperty("display", "none");
-      displayPlayerSelection();
+      displayPlayerSelection(player1);
     });
 }
