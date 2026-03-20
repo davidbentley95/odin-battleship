@@ -76,9 +76,12 @@ const clearCellColour = () => {
 
 function placeShip(event, player) {
   const cellCoordinates = event.target.innerHTML;
-  player.placeShip(getBoatLength(), cellCoordinates, getDirection());
-  changeCellColour(event);
-  changeSelectedShip();
+  if(player.fleet.length < 5) {
+    player.placeShip(getBoatLength(), cellCoordinates, getDirection());
+    changeCellColour(event);
+    changeSelectedShip();
+  }
+  
 }
 
 function changeSelectedShip() {
@@ -87,7 +90,7 @@ function changeSelectedShip() {
   currentShip.classList.toggle("selected-boat");
   currentShip.classList.toggle("inactive");
 
-  if (nextBoat.classList.contains("boat")) {
+  if (nextBoat) {
     nextBoat.classList.toggle("selected-boat");
     let nextBoatLength = nextBoat.children.length;
     setBoatLength(nextBoatLength);
