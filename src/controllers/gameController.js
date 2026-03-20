@@ -9,9 +9,7 @@ export let winner = "";
 export let opponentType = "";
 let boatLength = 5;
 let boatDirection = "horizontal";
-
-// player1.presetShipPlacement();
-// player2.presetShipPlacement();
+let placingShips = true;
 
 export function playTurn(cellCoordinates) {
 
@@ -24,11 +22,22 @@ export function playTurn(cellCoordinates) {
         checkGameOver();
         playerTurn = 0;
     }
-
  };
+
+ export function setPlacingShips(bool) {
+   placingShips = bool;
+ }
+
+ export function getPlacingShips() {
+   return placingShips;
+ }
 
  export function setOpponentType(type) {
     opponentType = type;
+ }
+
+ export function getOpponentType() {
+   return opponentType;
  }
 
  function addShip(player, shipLength, coordinates, direction) {
@@ -41,6 +50,10 @@ export function playTurn(cellCoordinates) {
    } else {
       return player2;
    }
+ }
+
+ export function setPlayerTurn(turn) {
+   playTurn === turn;
  }
 
  export function setBoatLength(length) {

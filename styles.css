@@ -3,7 +3,6 @@ main {
     gap: 40px;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
 }
 
 header {
@@ -21,10 +20,6 @@ header {
     height: 400px;
 }
 
-.player-turn-header {
-    display: none;
-}
-
 .board-cell {
     aspect-ratio: 1 / 1;
     border: 1px solid #ccc;
@@ -33,11 +28,7 @@ header {
     content-visibility: hidden;
 }
 
-/* .board-cell:hover {
-    background: #757575;
-} */
-
-#ships {
+/* #ships {
     display: flex;
     flex-wrap: wrap;
     width: 100px;
@@ -48,8 +39,7 @@ header {
     background-color: black;
     height: 50px;
     width: 50px;
-
-}
+} */
 
 .inactive {
     pointer-events: none; 
@@ -90,14 +80,26 @@ header {
   display: grid;
   gap: 4px;
   justify-content: start;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, 36px);
 }
 
 .boat div {
-  width: 30px;
+  width: 34px;
   aspect-ratio: 1 / 1;
   background-color: grey;
   border: 1px solid #999;
+}
+
+.placed-ship {
+    background-color: lightblue;
+}
+
+.placing-ship {
+    background-color: lightblue;
+}
+
+.invalid-placement {
+    background-color: red;
 }
 
 .selected {
@@ -118,4 +120,25 @@ header {
 
 .selected-boat > div {
   background-color: lightblue;
+}
+
+.submit,
+.play-game,
+.player-turn-header {
+    display: none;
+}
+
+.place-boats-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin: 15px;
+}
+.playing-game-cell {
+    background-color: white;
+}
+
+.playing-game-cell:hover {
+    background-color: lightgray;
 }
