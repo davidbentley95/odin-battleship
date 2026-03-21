@@ -12,7 +12,6 @@ import {
   getBoatLength,
   setDirection,
   getDirection,
-  getCurrentPlayer,
   setPlayerTurn,
   setPlacingShips,
   getPlacingShips,
@@ -314,14 +313,19 @@ export function initUI() {
       //hide player1 board
       document.querySelector("#player1").style.setProperty("display", "none");
 
-      //hide submit button after pressing
-      submitButton.style.setProperty("display", "none");
-
       //display play game button
       displayPlayGameButton();
+    } else if(player1.fleet.length === 5 && getOpponentType() === "computer") {
+      createBoardGrid(player2);
+      player2.randomShipPlacement();
+      renderPlayGame();
+      playGameButton.style.setProperty("display", "none");
+      setPlacingShips(false);
     } else {
       alert("You must place all your ships before submitting");
     }
+    //hide submit button after pressing
+      submitButton.style.setProperty("display", "none");
   });
 
   playGameButton.addEventListener("click", () => {

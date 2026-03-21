@@ -53,16 +53,16 @@ export default class Gameboard {
   }
 
   placeShip(ship, coordStr, orientation) {
-    if (orientation !== "vertical" && orientation !== "horizontal") {
-      throw new Error('Invalid orientation, must be "vertical" or "horizontal"');
-    }
+    // if (orientation !== "vertical" && orientation !== "horizontal") {
+    //   throw new Error('Invalid orientation, must be "vertical" or "horizontal"');
+    // }
 
-    if (this.ships.includes(ship)) {
-      throw new Error("This ship is already placed");
-    }
+    // if (this.ships.includes(ship)) {
+    //   throw new Error("This ship is already placed");
+    // }
 
     let coordArr = this._convertStrtoNumberArr(coordStr);
-    this._isValidCoordinate(coordArr);
+    // this._isValidCoordinate(coordArr);
     this._canPlaceShip(ship, coordArr, orientation);
 
     for (let i = 0; i < ship.length; i++) {
