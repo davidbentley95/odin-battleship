@@ -109,7 +109,13 @@ function createBoardGrid(player) {
   main.append(parentDiv);
 
   let coordinates = [0, 0];
-  let cellID = 1;
+  let cellID;
+
+  if(player.playerID === "player1") {
+    cellID = 1;
+  } else {
+    cellID = 101;
+  }
 
   for (let i = 1; i <= boardSize; i++) {
     for (let j = 1; j <= boardSize; j++) {
@@ -121,7 +127,6 @@ function createBoardGrid(player) {
       div.id = String(cellID);
       div.addEventListener("mouseenter", changeCellColour);
       div.addEventListener("mouseleave", clearCellColour);
-
       div.addEventListener("click", (event) => {
         if (getPlacingShips()) {
           placeShip(event, player);
