@@ -3,6 +3,7 @@ import {
   player2,
   playerTurn,
   playTurn,
+  playComputerTurn,
   moveStatus,
   gameOver,
   winner,
@@ -15,6 +16,7 @@ import {
   setPlayerTurn,
   setPlacingShips,
   getPlacingShips,
+  opponentType,
 } from "../controllers/gameController.js";
 
 const turnHeader = document.querySelector(".player-turn-header");
@@ -122,7 +124,9 @@ function createBoardGrid(player) {
       coordinates[1] = j;
       const div = document.createElement("div");
       div.classList.add("board-cell");
-      div.textContent = coordinates.join(",");
+      let coordinateString = coordinates.join(",");
+      div.textContent = coordinateString;
+      div.dataset.coord = coordinateString;
       div.id = String(cellID);
       div.addEventListener("mouseenter", changeCellColour);
       div.addEventListener("mouseleave", clearCellColour);
@@ -165,9 +169,9 @@ function toggleInactiveClass(firstPlayer, secondPlayer) {
 function changePlayedCell(cell, hitResult) {
   cell.classList.toggle("inactive");
   if (hitResult === "missed") {
-    cell.style.setProperty("background-color", "grey");
+    cell.classList.add("missed");
   } else {
-    cell.style.setProperty("background-color", "green");
+    cell.classList.add("hit");
   }
 }
 
@@ -237,6 +241,14 @@ function displayPlayerSelection(player) {
   }
 }
 
+function playComputerMove(playerBoards) {
+  let cellCoordinates = playComputerTurn();
+
+  let cell = document.querySelector(`#player1 [data-coord="${cellCoordinates}"]`);
+
+  updateDOM(cell, playerBoards[0], playerBoards[1]);
+}
+
 function renderPlayGame() {
   const player1Board = document.querySelector("#player1");
   const player2Board = document.querySelector("#player2");
@@ -268,6 +280,9 @@ function renderPlayGame() {
       }
       playTurn(cellCoordinates);
       updateDOM(cell, playerBoards[0], playerBoards[1]);
+      if(opponentType === "computer") {
+        playComputerMove(playerBoards);
+      }
     });
 
   //remove ship placing formatting

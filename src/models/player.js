@@ -1,5 +1,5 @@
-import Gameboard from "./gameboard.js"
-import Ship from "./ship.js"
+import Gameboard from "./gameboard.js";
+import Ship from "./ship.js";
 
 export default class Player {
   constructor(playerID, size = 10) {
@@ -7,14 +7,24 @@ export default class Player {
     this.playerID = playerID;
     this.score = 0;
     this.fleet = [];
+    this.playedMoves = new Set();
+    this.lastMove = "";
+    this.firstFoundHit = "";
+    this.lastMoveHit = false;
+    this.nextMove = "";
+    this.foundShip = false;
+    this.failedSearchAttempt = 0;
+    this.successfulSearchAttemps = 0;
+    this.horizontalAttack = false;
+    this.verticalAttack = false;
   }
 
   presetShipPlacement() {
-    this.gameboard.placeShip(new Ship(5),"1,1", "vertical");
-    this.gameboard.placeShip(new Ship(4),"7,5", "horizontal");
-    this.gameboard.placeShip(new Ship(3),"2,7", "vertical");
-    this.gameboard.placeShip(new Ship(3),"10,3", "horizontal");
-    this.gameboard.placeShip(new Ship(2),"10,9", "horizontal");
+    this.gameboard.placeShip(new Ship(5), "1,1", "vertical");
+    this.gameboard.placeShip(new Ship(4), "7,5", "horizontal");
+    this.gameboard.placeShip(new Ship(3), "2,7", "vertical");
+    this.gameboard.placeShip(new Ship(3), "10,3", "horizontal");
+    this.gameboard.placeShip(new Ship(2), "10,9", "horizontal");
   }
 
   placeShip(shipLength, coordinates, direction) {
@@ -24,21 +34,21 @@ export default class Player {
   }
 
   _getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
 
-_isValidCoordinate(coord) {
+  _isValidCoordinate(coord) {
     if (coord[0] < 1 || coord[0] > 10 || coord[1] < 1 || coord[1] > 10) {
       return false;
     }
     return true;
   }
 
-_validMove(ship, coordArr, direction) {
+  _validMove(ship, coordArr, direction) {
     let testArr = [...coordArr];
 
     for (let i = 0; i < ship.length; i++) {
-      if(!this._isValidCoordinate(testArr)) return false;
+      if (!this._isValidCoordinate(testArr)) return false;
 
       const key = testArr.join(",");
       if (this.gameboard.occupied.has(key)) {
@@ -54,11 +64,10 @@ _validMove(ship, coordArr, direction) {
     return true;
   }
 
-
   randomShipPlacement() {
-    let ships = [5,4,3,3,2];
+    let ships = [5, 4, 3, 3, 2];
 
-    for(let i = 0; i < 5; i++) {
+    for (let i = 0; i < 5; i++) {
       const ship = new Ship(ships[i]);
       const direction = Math.random() < 0.5 ? "horizontal" : "vertical";
 
@@ -69,7 +78,7 @@ _validMove(ship, coordArr, direction) {
       let coordArr = [];
       coordArr.push(row, col);
 
-      while(!this._validMove(ship, coordArr, direction)) {
+      while (!this._validMove(ship, coordArr, direction)) {
         row = this._getRandomInt(1, 10);
         col = this._getRandomInt(1, 10);
 
@@ -77,10 +86,119 @@ _validMove(ship, coordArr, direction) {
         coordArr = [];
         coordArr.push(row, col);
       }
-      console.log(ship, coordStr, direction);
-      console.log("here")
       this.gameboard.placeShip(ship, coordStr, direction);
     }
-    console.log(this.fleet);
+  }
+
+  determineNextMove() {
+    if (this.lastMoveHit === false) {
+      this.failedSearchAttempt++;
+    }
+    // if (this.lastMoveHit && this.lastMove !== this.firstFoundHit) {
+    //   this.successfulSearchAttemps++;
+    // } else {
+    //   this.successfulSearchAttemps = 0;
+    // }
+    let firstHit = this.firstFoundHit;
+    let previousMoveArray = firstHit.split(",");
+    // if (this.successfulSearchAttemps > 0) {
+    //   previousMoveArray = this.lastMove.split(",");
+    // } else {
+    //   previousMoveArray = firstHit.split(",");
+    // }
+    
+
+    switch (this.failedSearchAttempt) {
+      case 0: //go left
+        let leftAttackArray = [...previousMoveArray];
+        leftAttackArray[1] = Number(leftAttackArray[1]) - this.successfulSearchAttemps;
+        let leftAttackString = leftAttackArray.join(",");
+        console.log("case0");
+        if (
+          this._isValidCoordinate(leftAttackArray) &&
+          !this.playedMoves.has(leftAttackString)
+        ) {
+          this.nextMove = leftAttackString;
+          break;
+        }
+      this.failedSearchAttempt++;
+      this.successfulSearchAttemps = 1;
+      case 1: //go right
+      console.log(`successful attacks = ${this.successfulSearchAttemps}`)
+        let rightAttackArray = [...previousMoveArray];
+        rightAttackArray[1] = Number(rightAttackArray[1]) + this.successfulSearchAttemps;
+        let rightAttackString = rightAttackArray.join(",");
+        console.log("case1");
+        if (
+          this._isValidCoordinate(rightAttackArray) &&
+          !this.playedMoves.has(rightAttackString)
+        ) {
+          this.nextMove = rightAttackString;
+          break;
+        }
+      this.failedSearchAttempt++;
+      this.successfulSearchAttemps = 1;
+      case 2: //go up
+        let upAttackArray = [...previousMoveArray];
+        upAttackArray[0] = Number(upAttackArray[0]) - this.successfulSearchAttemps;
+        let upAttackString = upAttackArray.join(",");
+        console.log("case2");
+        if (
+          this._isValidCoordinate(upAttackArray) &&
+          !this.playedMoves.has(upAttackString)
+        ) {
+          this.nextMove = upAttackString;
+          break;
+        }
+      this.failedSearchAttempt++;
+      this.successfulSearchAttemps = 1;
+      case 3: //go down
+        let downAttackArray = [...previousMoveArray];
+        downAttackArray[0] = Number(downAttackArray[0]) + this.successfulSearchAttemps;
+        let downAttackString = downAttackArray.join(",");
+        console.log("case3");
+        console.log(downAttackString)
+        if (
+          this._isValidCoordinate(downAttackArray) &&
+          !this.playedMoves.has(downAttackString)
+        ) {
+          this.nextMove = downAttackString;
+          break;
+        }
+        this.foundShip = false;
+        this.failedSearchAttempt = 4;
+        this.successfulSearchAttemps = 0;
+        this.nextMove = this.randomMove();
+    }
+  }
+
+  randomMove() {
+    if (this.foundShip && this.failedSearchAttempt !== 4) {
+      this.determineNextMove();
+      // console.log(
+      //   `Failed Searches: ${this.failedSearchAttempt}, Successful Searches: ${this.successfulSearchAttemps}, Last Move: ${this.lastMove}, First Found Hit:${this.firstFoundHit} Last Hit Move: ${this.lastMoveHit}`,
+      // );
+      this.lastMove = this.nextMove;
+      this.playedMoves.add(this.nextMove);
+      return this.nextMove;
+    } else {
+      this.successfulSearchAttemps = 0;
+      this.failedSearchAttempt = 0;
+      let row = this._getRandomInt(1, 10);
+      let col = this._getRandomInt(1, 10);
+
+      let coordStr = `${row},${col}`;
+
+      while (this.playedMoves.has(coordStr)) {
+        row = this._getRandomInt(1, 10);
+        col = this._getRandomInt(1, 10);
+
+        coordStr = `${row},${col}`;
+      }
+
+      this.lastMove = coordStr;
+      this.playedMoves.add(coordStr);
+      return coordStr;
+    }
   }
 }

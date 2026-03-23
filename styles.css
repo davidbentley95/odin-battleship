@@ -142,3 +142,11 @@ header {
 .playing-game-cell:hover {
     background-color: lightgray;
 }
+
+.hit {
+    background-color: lightgreen;
+}
+
+.missed {
+    background-color: grey;
+}
