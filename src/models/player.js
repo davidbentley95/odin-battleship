@@ -4,6 +4,7 @@ import Ship from "./ship.js";
 export default class Player {
   constructor(playerID, size = 10) {
     this.gameboard = new Gameboard(size);
+    this.size = size;
     this.playerID = playerID;
     this.score = 0;
     this.fleet = [];
@@ -15,8 +16,19 @@ export default class Player {
     this.foundShip = false;
     this.failedSearchAttempt = 0;
     this.successfulSearchAttemps = 0;
-    this.horizontalAttack = false;
-    this.verticalAttack = false;
+  }
+
+  resetGameBoard() {
+    this.gameboard = new Gameboard(this.size);
+    this.fleet = [];
+    this.playedMoves = new Set();
+    this.lastMove = "";
+    this.firstFoundHit = "";
+    this.lastMoveHit = false;
+    this.nextMove = "";
+    this.foundShip = false;
+    this.failedSearchAttempt = 0;
+    this.successfulSearchAttemps = 0;
   }
 
   presetShipPlacement() {
@@ -94,26 +106,15 @@ export default class Player {
     if (this.lastMoveHit === false) {
       this.failedSearchAttempt++;
     }
-    // if (this.lastMoveHit && this.lastMove !== this.firstFoundHit) {
-    //   this.successfulSearchAttemps++;
-    // } else {
-    //   this.successfulSearchAttemps = 0;
-    // }
+
     let firstHit = this.firstFoundHit;
     let previousMoveArray = firstHit.split(",");
-    // if (this.successfulSearchAttemps > 0) {
-    //   previousMoveArray = this.lastMove.split(",");
-    // } else {
-    //   previousMoveArray = firstHit.split(",");
-    // }
     
-
     switch (this.failedSearchAttempt) {
       case 0: //go left
         let leftAttackArray = [...previousMoveArray];
         leftAttackArray[1] = Number(leftAttackArray[1]) - this.successfulSearchAttemps;
         let leftAttackString = leftAttackArray.join(",");
-        console.log("case0");
         if (
           this._isValidCoordinate(leftAttackArray) &&
           !this.playedMoves.has(leftAttackString)
@@ -124,11 +125,9 @@ export default class Player {
       this.failedSearchAttempt++;
       this.successfulSearchAttemps = 1;
       case 1: //go right
-      console.log(`successful attacks = ${this.successfulSearchAttemps}`)
         let rightAttackArray = [...previousMoveArray];
         rightAttackArray[1] = Number(rightAttackArray[1]) + this.successfulSearchAttemps;
         let rightAttackString = rightAttackArray.join(",");
-        console.log("case1");
         if (
           this._isValidCoordinate(rightAttackArray) &&
           !this.playedMoves.has(rightAttackString)
@@ -142,7 +141,6 @@ export default class Player {
         let upAttackArray = [...previousMoveArray];
         upAttackArray[0] = Number(upAttackArray[0]) - this.successfulSearchAttemps;
         let upAttackString = upAttackArray.join(",");
-        console.log("case2");
         if (
           this._isValidCoordinate(upAttackArray) &&
           !this.playedMoves.has(upAttackString)
@@ -156,8 +154,6 @@ export default class Player {
         let downAttackArray = [...previousMoveArray];
         downAttackArray[0] = Number(downAttackArray[0]) + this.successfulSearchAttemps;
         let downAttackString = downAttackArray.join(",");
-        console.log("case3");
-        console.log(downAttackString)
         if (
           this._isValidCoordinate(downAttackArray) &&
           !this.playedMoves.has(downAttackString)
@@ -175,9 +171,6 @@ export default class Player {
   randomMove() {
     if (this.foundShip && this.failedSearchAttempt !== 4) {
       this.determineNextMove();
-      // console.log(
-      //   `Failed Searches: ${this.failedSearchAttempt}, Successful Searches: ${this.successfulSearchAttemps}, Last Move: ${this.lastMove}, First Found Hit:${this.firstFoundHit} Last Hit Move: ${this.lastMoveHit}`,
-      // );
       this.lastMove = this.nextMove;
       this.playedMoves.add(this.nextMove);
       return this.nextMove;

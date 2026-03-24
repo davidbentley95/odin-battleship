@@ -14,9 +14,6 @@ let placingShips = true;
 export function playTurn(cellCoordinates) {
   if (playerTurn === 0) {
     moveStatus = player2.gameboard.receiveAttack(cellCoordinates);
-    if (moveStatus === "hit") {
-      // player1.lastMoveHit = true;
-    }
     checkGameOver();
     playerTurn = 1;
   } else {
@@ -31,7 +28,6 @@ export function playComputerTurn() {
   const cellCoordinates = player2.randomMove();
 
   moveStatus = player1.gameboard.receiveAttack(cellCoordinates);
-  console.log(moveStatus);
   checkGameOver();
   if(moveStatus === "hit" && player2.foundShip === false) {
    player2.firstFoundHit = cellCoordinates;
@@ -56,8 +52,6 @@ export function playComputerTurn() {
    }
   }
   playerTurn = 0;
-
-  console.log(player2.lastMoveHit);
 
   return cellCoordinates;
 }
@@ -122,4 +116,16 @@ function checkGameOver() {
     player1.score++;
     gameOver = true;
   }
+}
+
+export function playAgain() {
+   player1.resetGameBoard();
+   player2.resetGameBoard();
+   gameOver = false;
+   playerTurn = 0;
+   boatLength = 5;
+   boatDirection = "horizontal";
+   placingShips = true;
+   moveStatus = "";
+   winner = "";
 }

@@ -1,6 +1,12 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    flex-direction: column;
+}
+
 main {
     display: flex;
-    gap: 40px;
     justify-content: center;
     align-items: center;
 }
@@ -11,12 +17,9 @@ header {
     flex-direction: column;
 }
 
-/* .player-header {
-
-} */
-
 #player1, #player2 {
     display: grid;
+    margin: 0 20px 0 20px;
     gap: 4px;    
     grid-template-columns: repeat(var(--n), 1fr);
     grid-template-rows: repeat(var(--n), 1fr);
@@ -31,19 +34,6 @@ header {
     cursor: pointer;
     content-visibility: hidden;
 }
-
-/* #ships {
-    display: flex;
-    flex-wrap: wrap;
-    width: 100px;
-    height: 100px;
-    gap: 4px;
-}
-.ship>div {
-    background-color: black;
-    height: 50px;
-    width: 50px;
-} */
 
 .inactive {
     pointer-events: none; 

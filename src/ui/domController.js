@@ -17,14 +17,22 @@ import {
   setPlacingShips,
   getPlacingShips,
   opponentType,
+  playAgain
 } from "../controllers/gameController.js";
 
 const turnHeader = document.querySelector(".player-turn-header");
 const submitButton = document.querySelector(".submit");
 const playGameButton = document.querySelector(".play-game");
 const opponentButtons = document.querySelector(".opponent-buttons");
+const modal = document.querySelector(".modal-box");
+const playAgainButton = document.querySelector(".play-again");
+const startOverButton = document.querySelector(".start-over");
+const boats = document.querySelector(".boats");
+const directionSelector = document.querySelector(".direction-selector");
+const player1Container = document.querySelector(".player1");
+const player2Container = document.querySelector(".player2");
 
-//event helpers
+// event helpers
 const changeCellColour = (event) => {
   let cell = event.target;
   let cellID = cell.id;
@@ -39,10 +47,12 @@ const changeCellColour = (event) => {
     visitedCells.push(cell);
     cellRow = Number(cell.innerHTML.split(",")[0]);
     cellColumn = Number(cell.innerHTML.split(",")[1]);
+
     if (event.type === "click") {
       cell.classList.toggle("placing-ship");
       cell.classList.add("placed-ship");
     }
+
     if (getDirection() === "horizontal") {
       cell = cell.nextElementSibling;
     } else {
@@ -50,6 +60,7 @@ const changeCellColour = (event) => {
       cell = document.getElementById(nextCellID);
       cellID = nextCellID;
     }
+
     if (!cell) {
       break;
     }
@@ -77,22 +88,24 @@ const clearCellColour = () => {
 
 function placeShip(event, player) {
   const cellCoordinates = event.target.innerHTML;
-  if(player.fleet.length < 5) {
+
+  if (player.fleet.length < 5) {
     player.placeShip(getBoatLength(), cellCoordinates, getDirection());
     changeCellColour(event);
     changeSelectedShip();
   }
-  
 }
 
 function changeSelectedShip() {
   let currentShip = document.querySelector(".selected-boat");
+  if (!currentShip) return;
+
   let nextBoat = currentShip.nextElementSibling;
-  currentShip.classList.toggle("selected-boat");
-  currentShip.classList.toggle("inactive");
+  currentShip.classList.remove("selected-boat");
+  currentShip.classList.add("inactive");
 
   if (nextBoat) {
-    nextBoat.classList.toggle("selected-boat");
+    nextBoat.classList.add("selected-boat");
     let nextBoatLength = nextBoat.children.length;
     setBoatLength(nextBoatLength);
   }
@@ -104,33 +117,29 @@ function createBoardGrid(player) {
   parentDiv.id = player.playerID;
   parentDiv.classList.add("player-board");
 
+  document.querySelector(`.${player.playerID}`).classList.remove("inactive");
+
   parentDiv.style.setProperty("--n", boardSize);
 
   const boardContainer = document.querySelector(`.${player.playerID}`);
   boardContainer.append(parentDiv);
 
-  // const playerHeader = document.querySelectorAll(".player-header");
-  // playerHeader.forEach(header => header.style.display = "flex");
-
   let coordinates = [0, 0];
-  let cellID;
-
-  if(player.playerID === "player1") {
-    cellID = 1;
-  } else {
-    cellID = 101;
-  }
+  let cellID = player.playerID === "player1" ? 1 : 101;
 
   for (let i = 1; i <= boardSize; i++) {
     for (let j = 1; j <= boardSize; j++) {
       coordinates[0] = i;
       coordinates[1] = j;
+
       const div = document.createElement("div");
       div.classList.add("board-cell");
+
       let coordinateString = coordinates.join(",");
       div.textContent = coordinateString;
       div.dataset.coord = coordinateString;
       div.id = String(cellID);
+
       div.addEventListener("mouseenter", changeCellColour);
       div.addEventListener("mouseleave", clearCellColour);
       div.addEventListener("click", (event) => {
@@ -146,12 +155,19 @@ function createBoardGrid(player) {
 }
 
 function updateTurnHeader() {
-
   if (playerTurn === 0) {
     turnHeader.textContent = "Player Turn: Player 1";
   } else {
     turnHeader.textContent = "Player Turn: Player 2";
   }
+}
+
+function updatePlayerScores() {
+  const player1Score = document.querySelector(".player1-score");
+  const player2Score = document.querySelector(".player2-score");
+
+  player1Score.innerHTML = player1.score;
+  player2Score.innerHTML = player2.score;
 }
 
 function toggleInactiveClass(firstPlayer, secondPlayer) {
@@ -160,7 +176,8 @@ function toggleInactiveClass(firstPlayer, secondPlayer) {
 }
 
 function changePlayedCell(cell, hitResult) {
-  cell.classList.toggle("inactive");
+  cell.classList.add("inactive");
+
   if (hitResult === "missed") {
     cell.classList.add("missed");
   } else {
@@ -168,60 +185,51 @@ function changePlayedCell(cell, hitResult) {
   }
 }
 
-function updateDOM(cell, player1Board, player2Board) {
+function updateDOM(cell, playerBoards) {
   changePlayedCell(cell, moveStatus);
+
   if (gameOver) {
-    const modal = document.querySelector(".modal-box");
     modal.style.display = "flex";
 
     const winnerHeader = document.querySelector(".winning-player");
     winnerHeader.innerHTML = winner;
 
+    updatePlayerScores();
+
     document.querySelector("main").classList.add("inactive");
   } else {
     updateTurnHeader();
-    toggleInactiveClass(player1Board, player2Board);
+    toggleInactiveClass(playerBoards[0], playerBoards[1]);
   }
 }
 
 function displayBoats() {
-  const boats = document.querySelector(".boats");
-  boats.style.setProperty("display", "grid");
+  const boatControls = document.querySelector(".place-boats-controls");
+  boatControls.style.display = "flex";
+  boats.style.display = "grid";
 
-  //controls for when boats are selected
-  document.querySelectorAll(".boat").forEach((el) =>
-    el.addEventListener("click", (event) => {
-      //remove selected-boat class from all boats
-      for (const child of boats.children) {
-        child.classList.remove("selected-boat");
-      }
-      //add selected-boat class for special highlighting
-      const boat = event.currentTarget;
-      boat.classList.toggle("selected-boat");
-      //obtain and return the length of the boat to game controller
-      const boatLength = boat.children.length;
-      setBoatLength(boatLength);
-    }),
-  );
+  directionSelector.style.display = "flex";
 
-  const directionSelector = document.querySelector(".direction-selector");
-  directionSelector.style.setProperty("display", "flex");
-  directionSelector.addEventListener("click", (event) => {
-    const input = event.target.closest("input");
-    if (input) {
-      setDirection(input.value);
-    }
+  const allBoats = document.querySelectorAll(".boat");
+  allBoats.forEach((boat) => {
+    boat.classList.remove("inactive");
+    boat.classList.remove("selected-boat");
   });
 
-  setBoatLength(5);
+  if (allBoats[0]) {
+    allBoats[0].classList.add("selected-boat");
+    setBoatLength(allBoats[0].children.length);
+  }
+
+  setDirection("horizontal");
 }
 
-function displaySubmitButton(player) {
-  submitButton.style.setProperty("display", "flex");
+function displaySubmitButton() {
+  submitButton.style.display = "flex";
 }
 
 function displayPlayGameButton() {
-  playGameButton.style.setProperty("display", "flex");
+  playGameButton.style.display = "flex";
 }
 
 function displayPlayerSelection(player) {
@@ -229,8 +237,9 @@ function displayPlayerSelection(player) {
   createBoardGrid(player);
   document.querySelector(`.${playerID}-header`).style.display = "flex";
   displayBoats();
+
   if (player.playerID === "player1") {
-    displaySubmitButton(player);
+    displaySubmitButton();
   } else {
     displayPlayGameButton();
   }
@@ -238,110 +247,182 @@ function displayPlayerSelection(player) {
 
 function playComputerMove(playerBoards) {
   let cellCoordinates = playComputerTurn();
-
   let cell = document.querySelector(`#player1 [data-coord="${cellCoordinates}"]`);
-
-  updateDOM(cell, playerBoards[0], playerBoards[1]);
+  updateDOM(cell, playerBoards);
 }
 
 function renderPlayGame() {
-  const player1Board = document.querySelector(".player1");
-  const player2Board = document.querySelector(".player2");
-  
-  //display both boards
   const playerBoards = document.querySelectorAll(".board-container");
+
   playerBoards.forEach((board) => {
-    board.style.setProperty("display", "grid");
+    board.style.display = "grid";
   });
 
-  //set player1 to inactive to start
-  player1Board.classList.toggle("inactive");
+  // set player1 board inactive to start so player2 goes first click target
+  player1Container.classList.add("inactive");
+  player2Container.classList.remove("inactive");
 
-  player1Board.addEventListener("click", (event) => {
-      const cell = event.target.closest(".board-cell");
-      const cellCoordinates = event.target.innerHTML;
-      if (!cell) {
-        return;
-      }
-      playTurn(cellCoordinates);
-      updateDOM(cell, playerBoards[0], playerBoards[1]);
-    });
-
-    player2Board.addEventListener("click", (event) => {
-      const cell = event.target.closest(".board-cell");
-      const cellCoordinates = event.target.innerHTML;
-      if (!cell) {
-        return;
-      }
-      playTurn(cellCoordinates);
-      updateDOM(cell, playerBoards[0], playerBoards[1]);
-      if(opponentType === "computer") {
-        playComputerMove(playerBoards);
-      }
-    });
-
-  //remove ship placing formatting
   const cells = document.querySelectorAll(".board-cell");
-
   cells.forEach((cell) => {
     cell.removeEventListener("mouseenter", changeCellColour);
     cell.removeEventListener("mouseleave", clearCellColour);
     cell.classList.add("playing-game-cell");
   });
 
-  //hide boats and radio buttons
-  document.querySelector(".place-boats-controls").style.setProperty("display", "none");
+  document.querySelector(".place-boats-controls").style.display = "none";
+  turnHeader.style.display = "flex";
+  updateTurnHeader();
+}
 
-  //show player turn header
-  turnHeader.style.setProperty("display", "flex");
+function resetUIForPlayAgain() {
+  const board1 = document.querySelector("#player1");
+  const board2 = document.querySelector("#player2");
+
+  if (board1) board1.remove();
+  if (board2) board2.remove();
+
+  modal.style.display = "none";
+  document.querySelector("main").classList.remove("inactive");
+
+  submitButton.style.display = "none";
+  playGameButton.style.display = "none";
+  turnHeader.style.display = "none";
+
+  document.querySelector(".place-boats-controls").style.display = "none";
+  boats.style.display = "none";
+  directionSelector.style.display = "none";
+
+  document.querySelector(".player1-header").style.display = "none";
+  document.querySelector(".player2-header").style.display = "none";
+
+  player1Container.classList.remove("inactive");
+  player2Container.classList.remove("inactive");
+
+  document.querySelector(".player2-name").innerHTML = "Player 2";
+
+  const allBoats = document.querySelectorAll(".boat");
+  allBoats.forEach((boat) => {
+    boat.classList.remove("selected-boat");
+    boat.classList.remove("inactive");
+  });
+
+  if (allBoats[0]) {
+    allBoats[0].classList.add("selected-boat");
+    setBoatLength(allBoats[0].children.length);
+  }
+
+  setDirection("horizontal");
+}
+
+function handlePlayer1BoardClick(event) {
+  if (getPlacingShips()) return;
+
+  const playerBoards = document.querySelectorAll(".board-container");
+  const cell = event.target.closest(".board-cell");
+  if (!cell) return;
+
+  const cellCoordinates = cell.innerHTML;
+  playTurn(cellCoordinates);
+  updateDOM(cell, playerBoards);
+}
+
+function handlePlayer2BoardClick(event) {
+  if (getPlacingShips()) return;
+
+  const playerBoards = document.querySelectorAll(".board-container");
+  const cell = event.target.closest(".board-cell");
+  if (!cell) return;
+
+  const cellCoordinates = cell.innerHTML;
+  playTurn(cellCoordinates);
+  updateDOM(cell, playerBoards);
+
+  if (opponentType === "computer" && !gameOver) {
+    playComputerMove(playerBoards);
+  }
 }
 
 export function initUI() {
-
   opponentButtons.addEventListener("click", (event) => {
     const button = event.target.closest("button");
+    if (!button) return;
 
-    if (button) {
-      setOpponentType(button.value);
-    }
-    document.querySelector(".game-start").style.setProperty("display", "none");
+    setOpponentType(button.value);
+    document.querySelector(".game-start").style.display = "none";
     displayPlayerSelection(player1);
   });
 
+  boats.addEventListener("click", (event) => {
+    const boat = event.target.closest(".boat");
+    if (!boat) return;
+
+    for (const child of boats.children) {
+      child.classList.remove("selected-boat");
+    }
+
+    boat.classList.add("selected-boat");
+    const boatLength = boat.children.length;
+    setBoatLength(boatLength);
+  });
+
+  directionSelector.addEventListener("click", (event) => {
+    const input = event.target.closest("input");
+    if (input) {
+      setDirection(input.value);
+    }
+  });
+
+  player1Container.addEventListener("click", handlePlayer1BoardClick);
+  player2Container.addEventListener("click", handlePlayer2BoardClick);
+
   submitButton.addEventListener("click", () => {
     if (player1.fleet.length === 5 && getOpponentType() === "player") {
-      //change current turn
       setPlayerTurn(1);
 
       displayPlayerSelection(player2);
+
       const boats = document.querySelectorAll(".boat");
-      boats[0].classList.toggle("selected-boat");
+      if (boats[0]) {
+        boats[0].classList.add("selected-boat");
+      }
+
       boats.forEach((boat) => {
-        boat.classList.toggle("inactive");
+        boat.classList.remove("inactive");
       });
 
-      //hide player1 board
-      document.querySelector(".board-container").style.setProperty("display", "none");
-
-      //display play game button
+      document.querySelector(".board-container").style.display = "none";
       displayPlayGameButton();
-    } else if(player1.fleet.length === 5 && getOpponentType() === "computer") {
+    } else if (player1.fleet.length === 5 && getOpponentType() === "computer") {
       createBoardGrid(player2);
+      const player2Header = document.querySelector(".player2-header");
+      player2Header.style.display = "flex";
+      document.querySelector(".player2-name").innerHTML = "Computer";
       player2.randomShipPlacement();
       renderPlayGame();
-      playGameButton.style.setProperty("display", "none");
+      playGameButton.style.display = "none";
       setPlacingShips(false);
     } else {
       alert("You must place all your ships before submitting");
     }
-    //hide submit button after pressing
-      submitButton.style.setProperty("display", "none");
+
+    submitButton.style.display = "none";
   });
 
   playGameButton.addEventListener("click", () => {
     renderPlayGame();
-    playGameButton.style.setProperty("display", "none");
+    playGameButton.style.display = "none";
     setPlacingShips(false);
-    
+  });
+
+  playAgainButton.addEventListener("click", () => {
+    playAgain();
+    resetUIForPlayAgain();
+    setPlacingShips(true);
+    setPlayerTurn(0);
+    displayPlayerSelection(player1);
+  });
+
+  startOverButton.addEventListener("click", () => {
+    window.location.reload();
   });
 }
