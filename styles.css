@@ -150,3 +150,9 @@ header {
 .missed {
     background-color: grey;
 }
+
+@media (max-width: 860px) {
+    main {
+        flex-direction: column;
+    }
+}
