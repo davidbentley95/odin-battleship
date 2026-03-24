@@ -12,8 +12,12 @@
         <h1>BATTLESHIP</h1>
         <h2 class="player-turn-header">Player Turn: Player 1</h2>
     </header>
-    <modal>
-        <div class="modal-box"><span class="winning-player"></span> wins!</div>
+    <modal class="modal-box">
+        <div class="modal-text"><span class="winning-player"> </span> wins!</div>
+        <div class="start-over-buttons">
+            <button class="play-again">Play Again</button>
+            <button class="start-over">Start Over</button>
+        </div>
     </modal>
     <section class="game-start">
         <h2>Welcome to Battleship!</h2>
@@ -24,7 +28,19 @@
         </div>
     </section>
     <main>
-        
+        <div class="board-container player1">
+            <div class="player-header player1-header">
+                <p class="player1-name">Player 1</p>
+                <p>Score: <span class="player1-score"></span></p>
+            </div>
+        </div>
+
+        <div class="board-container player2">
+            <div class="player-header player2-header">
+                <p class="player2-name">Player 2</p>
+                <p>Score: <span class="player2-score"></span></p>
+            </div>
+        </div>
     </main>
     <section class="place-boats-controls">
         <button class="submit">Submit</button>
@@ -65,7 +81,6 @@
                 <div></div>
             </div>
         </div>
-    </section>
-    
+    </section>    
 </body>
 </html>

@@ -106,8 +106,11 @@ function createBoardGrid(player) {
 
   parentDiv.style.setProperty("--n", boardSize);
 
-  const main = document.querySelector("main");
-  main.append(parentDiv);
+  const boardContainer = document.querySelector(`.${player.playerID}`);
+  boardContainer.append(parentDiv);
+
+  // const playerHeader = document.querySelectorAll(".player-header");
+  // playerHeader.forEach(header => header.style.display = "flex");
 
   let coordinates = [0, 0];
   let cellID;
@@ -142,16 +145,6 @@ function createBoardGrid(player) {
   }
 }
 
-// function placeComputerShips() {
-//   const cells = document.querySelectorAll(".board-cell");
-
-//   player2.gameboard.occupied.keys().forEach((key) => {
-//     const target = [...cells].find((cell) => cell.textContent.trim() === key);
-
-//     target.style.setProperty("background-color", "blue");
-//   });
-// }
-
 function updateTurnHeader() {
 
   if (playerTurn === 0) {
@@ -179,7 +172,7 @@ function updateDOM(cell, player1Board, player2Board) {
   changePlayedCell(cell, moveStatus);
   if (gameOver) {
     const modal = document.querySelector(".modal-box");
-    modal.style.setProperty("visibility", "visible");
+    modal.style.display = "flex";
 
     const winnerHeader = document.querySelector(".winning-player");
     winnerHeader.innerHTML = winner;
@@ -232,7 +225,9 @@ function displayPlayGameButton() {
 }
 
 function displayPlayerSelection(player) {
+  const playerID = player.playerID;
   createBoardGrid(player);
+  document.querySelector(`.${playerID}-header`).style.display = "flex";
   displayBoats();
   if (player.playerID === "player1") {
     displaySubmitButton(player);
@@ -250,11 +245,11 @@ function playComputerMove(playerBoards) {
 }
 
 function renderPlayGame() {
-  const player1Board = document.querySelector("#player1");
-  const player2Board = document.querySelector("#player2");
+  const player1Board = document.querySelector(".player1");
+  const player2Board = document.querySelector(".player2");
   
   //display both boards
-  const playerBoards = document.querySelectorAll(".player-board");
+  const playerBoards = document.querySelectorAll(".board-container");
   playerBoards.forEach((board) => {
     board.style.setProperty("display", "grid");
   });
@@ -326,7 +321,7 @@ export function initUI() {
       });
 
       //hide player1 board
-      document.querySelector("#player1").style.setProperty("display", "none");
+      document.querySelector(".board-container").style.setProperty("display", "none");
 
       //display play game button
       displayPlayGameButton();

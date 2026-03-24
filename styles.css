@@ -11,6 +11,10 @@ header {
     flex-direction: column;
 }
 
+/* .player-header {
+
+} */
+
 #player1, #player2 {
     display: grid;
     gap: 4px;    
@@ -46,24 +50,35 @@ header {
 }
 
 .modal-box {
-    display: flex;
+    display: none;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
     width: 300px;
     height: 100px;
-    background: rgba(122, 121, 121, 0.2);
+    background: rgba(202, 202, 202, 0.2);
     border-radius: 16px;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
-    border: 1px solid rgba(122, 121, 121, 0.3);
+    border: 1px solid rgba(197, 197, 197, 0.3);
     font-size: 2em;
     position: absolute;
     top: 30%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 99;
-    visibility: hidden;
+}
+
+button:hover {
+    cursor: pointer;
+}
+
+.player-header {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 
 .boats {
